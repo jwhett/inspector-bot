@@ -1,0 +1,22 @@
+{
+  "name": "inspector-bot",
+  "version": "1.0.0",
+  "description": "bot to report on reactions to messages",
+  "main": "bot.js",
+  "scripts": {
+    "bot": "node bot.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jwhett/inspector-bot.git"
+  },
+  "author": "Josh Whetton",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jwhett/inspector-bot/issues"
+  },
+  "homepage": "https://github.com/jwhett/inspector-bot#readme",
+  "dependencies": {
+    "discord.js": "^11.5.1"
+  }
+}
