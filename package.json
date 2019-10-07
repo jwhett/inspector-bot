@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/jwhett/inspector-bot#readme",
   "dependencies": {
-    "discord.js": "^11.5.1"
+    "discord.js": "^11.5.1",
+    "eslint": "^6.5.1"
   }
 }
