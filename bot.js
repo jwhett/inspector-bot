@@ -1,23 +1,9 @@
 const Discord = require('discord.js');
 const auth = require('./auth.json');
+const tracking = require('./tracker.js');
 const client = new Discord.Client();
 
 process.on('unhandledRejection', error => console.error('Uncaught Promise Rejection', error));
-
-// One tracker per person
-var Tracker = function(n){
-    this.name = n;
-	this.counts = {
-    	"seen": 0,
-    	"done": 0
-	};
-};
-
-// Map the emoji to symantics
-var Emoji = {
-    '👍': 'seen',
-    '💯': 'done'
-};
 
 // Keep a list of Trackers
 var trackers = [];
@@ -28,32 +14,32 @@ client.once('ready', () => {
 });
 
 client.on('messageReactionAdd', (mr, user) => {
-	//console.log("Reaction found!! Emoji: " + mr.emoji + " On: " + mr.message + " From: " + user.username);
+	//console.log("Reaction found!! tracking.Emoji: " + mr.emoji + " On: " + mr.message + " From: " + user.username);
 	if (user.bot) {
     	console.log("that's a bot");
     	return // Ignore bot reactions
 	};
-	if (mr.emoji in Emoji) {
+	if (mr.emoji in tracking.Emoji) {
     	var found = false;
     	var reaction = mr.emoji;
     	if (trackers.length === 0) {
         	// First time!
-        	var t = new Tracker(user.username);
-        	t.counts[Emoji[reaction]]++;
+        	var t = new tracking.Tracker(user.username);
+        	t.counts[tracking.Emoji[reaction]]++;
         	trackers.push(t);
     	} else {
         	// Try to find an existing tracker
         	for (var t of trackers) {
             	if (t.name === user.username) {
-                	t.counts[Emoji[reaction]]++;
+                	t.counts[tracking.Emoji[reaction]]++;
                 	found = true;
                 	break;
             	};
         	};
         	if (!found) {
             	// Need to add a new tracker
-            	var t = new Tracker(user.username);
-            	t.counts[Emoji[reaction]]++;
+            	var t = new tracking.Tracker(user.username);
+            	t.counts[tracking.Emoji[reaction]]++;
             	trackers.push(t);
         	};
     	};
@@ -67,8 +53,8 @@ client.on('message', message => {
 	const command = args.shift().toLowerCase();
 
 	if (command === 'inspect') {
-		message.react(Emoji.seen)
-			.then(() => message.react(Emoji.done))
+		message.react(tracking.Emoji.seen)
+			.then(() => message.react(tracking.Emoji.done))
 			.catch(() => console.error('One of the emojis failed to react.'));
 	};
 	if (command === 'report') {
