@@ -1,12 +1,13 @@
 const Discord = require('discord.js');
-const auth = require('./auth.json');
-const client = new Discord.Client();
+const auth    = require('./auth.json');
+const config  = require('./config.json');
+const client  = new Discord.Client();
 
 process.on('unhandledRejection', error => console.error('Uncaught Promise Rejection', error));
 
 // One tracker per person
 var Tracker = function(n){
-    this.name = n;
+    this.name   = n;
 	this.counts = {
     	"seen": 0,
     	"done": 0
@@ -23,19 +24,22 @@ var Emoji = {
 var trackers = [];
 
 client.once('ready', () => {
-	console.log('Ready!');
+	console.log('Inspecting!');
 	client.user.setActivity('the channel...', { type: 'LISTENING' });
 });
 
 client.on('messageReactionAdd', (mr, user) => {
-	//console.log("Reaction found!! Emoji: " + mr.emoji + " On: " + mr.message + " From: " + user.username);
-	if (user.bot) {
-    	console.log("that's a bot");
-    	return // Ignore bot reactions
-	};
+    // Don't care about bot reactions or channels
+    // that we aren't configured to watch.
+	if (user.bot || mr.message.channel.name != config.channel) return;
+
 	if (mr.emoji in Emoji) {
-    	var found = false;
-    	var reaction = mr.emoji;
+        var   found        = false;
+        const reaction     = mr.emoji;
+        const channel_name = mr.message.channel.name;
+
+        console.log('Reaction in ch: ' + channel_name);
+
     	if (trackers.length === 0) {
         	// First time!
         	var t = new Tracker(user.username);
@@ -61,9 +65,9 @@ client.on('messageReactionAdd', (mr, user) => {
 });
 
 client.on('message', message => {
-	if (!message.content.startsWith(auth.prefix) || message.author.bot) return;
+	if (!message.content.startsWith(config.prefix) || message.author.bot) return;
 
-	const args = message.content.slice(auth.prefix.length).split(/ +/);
+	const args = message.content.slice(config.prefix.length).split(/ +/);
 	const command = args.shift().toLowerCase();
 
 	if (command === 'inspect') {
