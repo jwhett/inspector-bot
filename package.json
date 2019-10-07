@@ -4,7 +4,8 @@
   "description": "bot to report on reactions to messages",
   "main": "bot.js",
   "scripts": {
-    "bot": "node bot.js"
+    "bot": "node bot.js",
+    "lint": "eslint bot.js --fix"
   },
   "repository": {
     "type": "git",

@@ -1,5 +1,5 @@
 const Discord = require('discord.js');
-const auth    = require('./auth.json');
+const auth	= require('./auth.json');
 const config  = require('./config.json');
 const client  = new Discord.Client();
 
@@ -7,17 +7,17 @@ process.on('unhandledRejection', error => console.error('Uncaught Promise Reject
 
 // One tracker per person
 var Tracker = function(n){
-    this.name   = n;
+	this.name   = n;
 	this.counts = {
-    	"seen": 0,
-    	"done": 0
+		"seen": 0,
+		"done": 0
 	};
 };
 
 // Map the emoji to symantics
 var Emoji = {
-    '👍': 'seen',
-    '💯': 'done'
+	'👍': 'seen',
+	'💯': 'done'
 };
 
 // Keep a list of Trackers
@@ -29,38 +29,38 @@ client.once('ready', () => {
 });
 
 client.on('messageReactionAdd', (mr, user) => {
-    // Don't care about bot reactions or channels
-    // that we aren't configured to watch.
+	// Don't care about bot reactions or channels
+	// that we aren't configured to watch.
 	if (user.bot || mr.message.channel.name != config.channel) return;
 
 	if (mr.emoji in Emoji) {
-        var   found        = false;
-        const reaction     = mr.emoji;
-        const channel_name = mr.message.channel.name;
+		var   found		= false;
+		const reaction	 = mr.emoji;
+		const channel_name = mr.message.channel.name;
 
-        console.log('Reaction in ch: ' + channel_name);
+		console.log('Reaction in ch: ' + channel_name);
 
-    	if (trackers.length === 0) {
-        	// First time!
-        	var t = new Tracker(user.username);
-        	t.counts[Emoji[reaction]]++;
-        	trackers.push(t);
-    	} else {
-        	// Try to find an existing tracker
-        	for (var t of trackers) {
-            	if (t.name === user.username) {
-                	t.counts[Emoji[reaction]]++;
-                	found = true;
-                	break;
-            	}
-        	}
-        	if (!found) {
-            	// Need to add a new tracker
-            	var t = new Tracker(user.username);
-            	t.counts[Emoji[reaction]]++;
-            	trackers.push(t);
-        	}
-    	}
+		if (trackers.length === 0) {
+			// First time!
+			var first_tracker = new Tracker(user.username);
+			first_tracker.counts[Emoji[reaction]]++;
+			trackers.push(first_tracker);
+		} else {
+			// Try to find an existing tracker
+			for (var t of trackers) {
+				if (t.name === user.username) {
+					t.counts[Emoji[reaction]]++;
+					found = true;
+					break;
+				}
+			}
+			if (!found) {
+				// Need to add a new tracker
+				var new_tracker = new Tracker(user.username);
+				new_tracker.counts[Emoji[reaction]]++;
+				trackers.push(new_tracker);
+			}
+		}
 	}
 });
 
@@ -76,10 +76,10 @@ client.on('message', message => {
 			.catch(() => console.error('One of the emojis failed to react.'));
 	}
 	if (command === 'report') {
-    	message.channel.send("Here's what I have tracked:");
-    	for (var t of trackers) {
-        	message.channel.send(t.name + " saw: *" + t.counts.seen + "* and completed: *" + t.counts.done + "*");
-    	}
+		message.channel.send("Here's what I have tracked:");
+		for (var t of trackers) {
+			message.channel.send(t.name + " saw: *" + t.counts.seen + "* and completed: *" + t.counts.done + "*");
+		}
 	}
 });
 
