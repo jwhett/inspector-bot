@@ -1,4 +1,8 @@
 {
     "channel": "CHANNEL NAME",
+    "emoji": {
+        "👍": "seen",
+        "💯": "done"
+    },
     "prefix": "PREFIX"
 }

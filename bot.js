@@ -5,12 +5,6 @@ const client = new Discord.Client();
 
 process.on('unhandledRejection', error => console.error('Uncaught Promise Rejection', error));
 
-// Map the emoji to symantics
-const Emoji = {
-	'👍': 'seen',
-	'💯': 'done',
-};
-
 // One tracker per person
 const Tracker = function(n) {
 	this.name = n;
@@ -27,7 +21,7 @@ const start_time = new Date();
 
 function addNewTracker(name, reaction) {
 	const new_tracker = new Tracker(name);
-	new_tracker.counts[Emoji[reaction]]++;
+	new_tracker.counts[config.emoji[reaction]]++;
 	trackers.push(new_tracker);
 }
 
@@ -41,7 +35,7 @@ client.on('messageReactionAdd', (mr, user) => {
 	// that we aren't configured to watch.
 	if (user.bot || mr.message.channel.name != config.channel) return;
 
-	if (mr.emoji in Emoji) {
+	if (mr.emoji in config.emoji) {
 		let found = false;
 		const reaction = mr.emoji;
 
@@ -52,7 +46,7 @@ client.on('messageReactionAdd', (mr, user) => {
 			// Try to find an existing tracker
 			for (const t of trackers) {
 				if (t.name === user.username) {
-					t.counts[Emoji[reaction]]++;
+					t.counts[config.emoji[reaction]]++;
 					found = true;
 					break;
 				}
@@ -81,9 +75,9 @@ client.on('message', message => {
 		dm_target.send('I have ' + trackers.length + ' trackers for the ' + config.channel + ' channel. Up since: ' + start_time);
 	}
 	if (command === 'report') {
-		dm_target.send('Here\'s what I\'ve been tracking in ' + config.channel + ':');
+		dm_target.send('Here\'s what I\'ve been tracking in ' + config.channel + 'since ' + start_time);
 		for (const t of trackers) {
-			dm_target.send(t.name + ' saw: *' + t.counts.seen + '* and completed: *' + t.counts.done + '*');
+			dm_target.send(t.name + ' saw: **' + t.counts.seen + '** and completed: **' + t.counts.done + '**');
 		}
 	}
 });
