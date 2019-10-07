@@ -14,3 +14,10 @@
 **Run the bot**
 
 Run the bot with `npm run bot`
+
+**Commands**
+
+Bot commands are limited to only those users listed in `config.json`.
+
+`?status` - DM the status of the bot to the caller.
+`?report` - Report inspection statistics to the caller.
